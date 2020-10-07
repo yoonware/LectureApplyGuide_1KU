@@ -217,7 +217,7 @@ public class Fragment_4 extends Fragment {
             public void onClick(View v) {
                 String cd = etCode.getText().toString();
                 for (int i = 0; i < MainActivity.favorites.size(); i++) {
-                    if(MainActivity.favorites.get(i).code.equals(cd)) {
+                    if(MainActivity.favorites.get(i).getCode().equals(cd)) {
                         Toast.makeText(getContext(), "이미 추가된강의 입니다.", Toast.LENGTH_SHORT).show();
                         etCode.setText("");
                         return;
@@ -238,7 +238,7 @@ public class Fragment_4 extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 String cd = etCode.getText().toString();
                 for (int i = 0; i < MainActivity.favorites.size(); i++) {
-                    if(MainActivity.favorites.get(i).code.equals(cd)) {
+                    if(MainActivity.favorites.get(i).getCode().equals(cd)) {
                         Toast.makeText(getContext(), "이미 추가된 강의 입니다.", Toast.LENGTH_SHORT).show();
                         etCode.setText("");
                         return false;
@@ -260,7 +260,7 @@ public class Fragment_4 extends Fragment {
             public void onClick(View v) {
                 String code = etCode.getText().toString();
                 for (int i = 0; i < MainActivity.favorites.size(); i++) {
-                    if(MainActivity.favorites.get(i).code.equals(code)) {
+                    if(MainActivity.favorites.get(i).getCode().equals(code)) {
 
                         SharedPreferences.Editor et0 = MainActivity.spNumber.edit();
                         SharedPreferences.Editor et1 = MainActivity.spCode.edit();
@@ -280,10 +280,10 @@ public class Fragment_4 extends Fragment {
                             et0.putInt("howMany", index);
                         }
                         else {
-                            et1.putString(i+"", MainActivity.favorites.get(index).code);
-                            et2.putString(i+"", MainActivity.favorites.get(index).title);
-                            et3.putString(i+"", MainActivity.favorites.get(index).prof);
-                            et4.putString(i+"", MainActivity.favorites.get(index).time);
+                            et1.putString(i+"", MainActivity.favorites.get(index).getCode());
+                            et2.putString(i+"", MainActivity.favorites.get(index).getTitle());
+                            et3.putString(i+"", MainActivity.favorites.get(index).getProfessor());
+                            et4.putString(i+"", MainActivity.favorites.get(index).getSchedule());
 
                             et1.remove(index+"");
                             et2.remove(index+"");
@@ -365,12 +365,13 @@ public class Fragment_4 extends Fragment {
                         int size = MainActivity.favorites.size();
                         ParseNumber[] parseNumber = new ParseNumber[size];
                         for (int i = 0; i < size; i++) {
-                            parseNumber[i] = new ParseNumber(nowGrade, MainActivity.favorites.get(i).code);
+                            parseNumber[i] = new ParseNumber(nowGrade, MainActivity.favorites.get(i).getCode());
                             parseNumber[i].executeOnExecutor(tpe);
                         }
                         for (int i = 0; i < size; i++) {
                             if (parseNumber[i].get()) {
-                                MainActivity.favorites.get(i).setNumber(parseNumber[i].count, parseNumber[i].limit);
+                                MainActivity.favorites.get(i).setPresent(parseNumber[i].count);
+                                MainActivity.favorites.get(i).setLimit(parseNumber[i].limit);
                             }
                             else {
                                 isError = true;
@@ -406,10 +407,10 @@ public class Fragment_4 extends Fragment {
                                 SharedPreferences.Editor et2 = MainActivity.spTitle.edit();
                                 SharedPreferences.Editor et3 = MainActivity.spProf.edit();
                                 SharedPreferences.Editor et4 = MainActivity.spTime.edit();
-                                et1.putString(index+"", lec.code);
-                                et2.putString(index+"", lec.title);
-                                et3.putString(index+"", lec.prof);
-                                et4.putString(index+"", lec.time);
+                                et1.putString(index+"", lec.getCode());
+                                et2.putString(index+"", lec.getTitle());
+                                et3.putString(index+"", lec.getProfessor());
+                                et4.putString(index+"", lec.getSchedule());
                                 et0.remove("howMany");
                                 et0.putInt("howMany", index + 1);
                                 et0.commit();
@@ -447,12 +448,13 @@ public class Fragment_4 extends Fragment {
                     int size = MainActivity.favorites.size();
                     ParseNumber[] parseNumber = new ParseNumber[size];
                     for (int i = 0; i < size; i++) {
-                        parseNumber[i] = new ParseNumber(nowGrade, MainActivity.favorites.get(i).code);
+                        parseNumber[i] = new ParseNumber(nowGrade, MainActivity.favorites.get(i).getCode());
                         parseNumber[i].executeOnExecutor(tpe);
                     }
                     for (int i = 0; i < size; i++) {
                         if (parseNumber[i].get()) {
-                            MainActivity.favorites.get(i).setNumber(parseNumber[i].count, parseNumber[i].limit);
+                            MainActivity.favorites.get(i).setPresent(parseNumber[i].count);
+                            MainActivity.favorites.get(i).setLimit(parseNumber[i].limit);
                         }
                         else {
                             isError = true;

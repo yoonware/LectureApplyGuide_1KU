@@ -143,12 +143,13 @@ public class Fragment_2 extends Fragment {
                         ParseNumber[] parseNumber = new ParseNumber[size];
                         String grade = spnGrade.getSelectedItem().toString();
                         for (int i = 0; i < size; i++) {
-                            parseNumber[i] = new ParseNumber(grade, MainActivity.lectures.get(i).code);
+                            parseNumber[i] = new ParseNumber(grade, MainActivity.lectures.get(i).getCode());
                             parseNumber[i].executeOnExecutor(tpe);
                         }
                         for (int i = 0; i < size; i++) {
                             if (parseNumber[i].get()) {
-                                MainActivity.lectures.get(i).setNumber(parseNumber[i].count, parseNumber[i].limit);
+                                MainActivity.lectures.get(i).setPresent(parseNumber[i].count);
+                                MainActivity.lectures.get(i).setLimit(parseNumber[i].limit);
                             }
                             else {
                                 isError = true;
@@ -175,7 +176,7 @@ public class Fragment_2 extends Fragment {
                             public void run() {
                                 if (isOnlyEmpty) {
                                     for (int i = MainActivity.lectures.size() - 1; i >= 0; i--) {
-                                        if (MainActivity.lectures.get(i).count >= MainActivity.lectures.get(i).limit) {
+                                        if (MainActivity.lectures.get(i).getPresent() >= MainActivity.lectures.get(i).getLimit()) {
                                             MainActivity.lectures.remove(i);
                                         }
                                     }

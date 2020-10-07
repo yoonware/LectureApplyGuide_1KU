@@ -31,17 +31,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Lecture item = items.get(i);
-        int count = item.count;
-        int limit = item.limit;
-        viewHolder.tvCode.setText(item.code);
-        viewHolder.tvTitle.setText(item.title);
-        if (item.prof.contains(",")) {
-            viewHolder.tvProf.setText(" (" + item.prof.substring(0, item.prof.indexOf(",")) + ")");
+        int count = item.getPresent();
+        int limit = item.getLimit();
+        viewHolder.tvCode.setText(item.getCode());
+        viewHolder.tvTitle.setText(item.getTitle());
+        if (item.getProfessor().contains(",")) {
+            viewHolder.tvProf.setText(" (" + item.getProfessor().substring(0, item.getProfessor().indexOf(",")) + ")");
         }
         else {
-            viewHolder.tvProf.setText(" (" + item.prof + ")");
+            viewHolder.tvProf.setText(" (" + item.getProfessor() + ")");
         }
-        viewHolder.tvTime.setText(item.time);
+        viewHolder.tvTime.setText(item.getSchedule());
         if (count >= limit) {
             SpannableString msg =  new SpannableString("인원초과");
             msg.setSpan(new ForegroundColorSpan(Color.parseColor("#FFBA131E")), 0, msg.length(), 0);
