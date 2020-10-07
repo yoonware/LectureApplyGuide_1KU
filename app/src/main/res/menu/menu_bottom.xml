@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/navigation_menu1"
+        android:icon="@drawable/img_category"
+        android:title="교양"/>
+    <item
+        android:id="@+id/navigation_menu2"
+        android:icon="@drawable/img_edit"
+        android:title="전공"/>
+    <item
+        android:id="@+id/navigation_menu3"
+        android:icon="@drawable/img_search"
+        android:title="검색" />
+    <item
+        android:id="@+id/navigation_menu4"
+        android:icon="@drawable/img_bigstar"
+        android:title="즐겨찾기"/>
+    <item
+        android:id="@+id/navigation_menu5"
+        android:icon="@drawable/img_developer"
+        android:title="개발자"/>
+</menu>
