@@ -24,10 +24,10 @@ public class ParseList extends AsyncTask<String, Void, Boolean> {
     String fld_wrt = "&cultCorsFld=B52002";     // 글쓰기
     String fld_job = "&cultCorsFld=B52003";     // 취창업
     String fld_sw  = "&cultCorsFld=B52004";     // SW
-    String fld_per  = "&cultCorsFld=B52005";    // 인성
+    String fld_per = "&cultCorsFld=B52005";    // 인성
     String fld_kor = "&cultCorsFld=B52006";     // 한국어
-    String fld_exp  = "&cultCorsFld=B52007";    // 사고와표현
-    String fld_flan  = "&cultCorsFld=B52008";   // 외국인글쓰기
+    String fld_exp = "&cultCorsFld=B52007";    // 사고와표현
+    String fld_flan = "&cultCorsFld=B52008";   // 외국인글쓰기
 
     @Override
     protected void onPreExecute() {

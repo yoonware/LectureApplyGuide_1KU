@@ -25,25 +25,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static java.security.AccessController.getContext;
-
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Fragment_1 extends Fragment {
+public class Fragment_1 extends Fragment implements Button.OnClickListener {
 
     LinearLayoutManager linearLayoutManager;
     RecyclerView recyclerView;
-    RecyclerAdapter     recyclerAdapter;
+    RecyclerAdapter recyclerAdapter;
+
+    SpannableString spannableString;
     ProgressDialog progressDialog;
 
-    Spinner spnDiv;
+    Spinner spnDivision;
     Spinner spnGrade;
-    Button btnAll;
-    Button  btnEmpty;
+    Button btnSearchAll;
+    Button btnSearchEmpty;
 
-    boolean isOnlyEmpty;
+    boolean isSearchOnlyEmpty;
 
     public Fragment_1() {
         // Required empty public constructor
@@ -52,63 +48,72 @@ public class Fragment_1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_1, container, false);
-        // 리사이클러뷰
+
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        // 진행 다이얼로그
-        SpannableString msg =  new SpannableString("강의 검색 중..");
-        msg.setSpan(new RelativeSizeSpan(1.3f), 0, msg.length(), 0);
-        msg.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, msg.length(), 0);
+
+        spannableString = new SpannableString("강의 검색 중..");
+        spannableString.setSpan(new RelativeSizeSpan(1.3f), 0, spannableString.length(), 0);
+        spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, spannableString.length(), 0);
+
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage(msg);
+        progressDialog.setMessage(spannableString);
         progressDialog.setCanceledOnTouchOutside(false);
-        // 스피너
-        spnDiv = view.findViewById(R.id.spnDiv);
+
+        spnDivision = view.findViewById(R.id.spnDivision);
         spnGrade = view.findViewById(R.id.spnGrade);
-        // 버튼 : 모든강의 보기
-        btnAll = view.findViewById(R.id.btnAll);
-        btnAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (spnDiv.getSelectedItem().toString().equals("이수구분 선택")) {
-                    Toast.makeText(getContext(), "이수구분을 선택해주세요.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    btnAll.setBackground(getResources().getDrawable(R.drawable.primary_round));
-                    btnAll.setTextColor(getResources().getColor(R.color.colorWhite));
-                    btnEmpty.setBackground(getResources().getDrawable(R.drawable.gray_round));
-                    btnEmpty.setTextColor(getResources().getColor(R.color.colorDarkGray));
-                    isOnlyEmpty = false;
-                    parse();
-                }
-            }
-        });
-        // 버튼 : 빈 강의만 보기
-        btnEmpty = view.findViewById(R.id.btnEmpty);
-        btnEmpty.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (spnDiv.getSelectedItem().toString().equals("이수구분 선택")) {
-                    Toast.makeText(getContext(), "이수구분을 선택해주세요.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    btnEmpty.setBackground(getResources().getDrawable(R.drawable.primary_round));
-                    btnEmpty.setTextColor(getResources().getColor(R.color.colorWhite));
-                    btnAll.setBackground(getResources().getDrawable(R.drawable.gray_round));
-                    btnAll.setTextColor(getResources().getColor(R.color.colorDarkGray));
-                    isOnlyEmpty = true;
-                    parse();
-                }
-            }
-        });
+
+        btnSearchAll = view.findViewById(R.id.btnSearchAll);
+        btnSearchAll.setOnClickListener(this);
+        btnSearchEmpty = view.findViewById(R.id.btnSearchEmpty);
+        btnSearchEmpty.setOnClickListener(this);
+
         return view;
     }
 
-    void parse() {
+    public boolean isDivisionSelected() {
+        if(spnDivision.getSelectedItemPosition() == 0) {
+            Toast.makeText(getContext(), "이수구분을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    public void setButtonColor() {
+        if(isSearchOnlyEmpty) {
+            btnSearchAll.setBackground(getResources().getDrawable(R.drawable.gray_round));
+            btnSearchAll.setTextColor(getResources().getColor(R.color.colorDarkGray));
+            btnSearchEmpty.setBackground(getResources().getDrawable(R.drawable.primary_round));
+            btnSearchEmpty.setTextColor(getResources().getColor(R.color.colorWhite));
+        }
+        else {
+            btnSearchAll.setBackground(getResources().getDrawable(R.drawable.primary_round));
+            btnSearchAll.setTextColor(getResources().getColor(R.color.colorWhite));
+            btnSearchEmpty.setBackground(getResources().getDrawable(R.drawable.gray_round));
+            btnSearchEmpty.setTextColor(getResources().getColor(R.color.colorDarkGray));
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(isDivisionSelected()) {
+            if(view.getId() == R.id.btnSearchAll) {
+                isSearchOnlyEmpty = false;
+            }
+            else if(view.getId() == R.id.btnSearchEmpty){
+                isSearchOnlyEmpty = true;
+            }
+            setButtonColor();
+            parse();
+        }
+    }
+
+    public void parse() {
         // 진행 다이얼로그 시작
         progressDialog.show();
         // 리스트 초기화
@@ -120,18 +125,13 @@ public class Fragment_1 extends Fragment {
                 ParseList parseList = new ParseList();
                 try {
                     boolean isError = false;
-                    if (parseList.execute(spnDiv.getSelectedItem().toString()).get()) {
+                    if (parseList.execute(spnDivision.getSelectedItem().toString()).get()) {
                         int size = MainActivity.lectures.size();
                         // 강의의 수가 0개 일 때
-                        if(size == 0) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    recyclerAdapter = new RecyclerAdapter(MainActivity.lectures);
-                                    recyclerView.setAdapter(recyclerAdapter);
-                                    Toast.makeText(getContext(), "강의가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                        if (size == 0) {
+                            recyclerAdapter = new RecyclerAdapter(MainActivity.lectures);
+                            recyclerView.setAdapter(recyclerAdapter);
+                            Toast.makeText(getContext(), "강의가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                             return;
                         }
@@ -148,14 +148,12 @@ public class Fragment_1 extends Fragment {
                             if (parseNumber[i].get()) {
                                 MainActivity.lectures.get(i).setPresent(parseNumber[i].count);
                                 MainActivity.lectures.get(i).setLimit(parseNumber[i].limit);
-                            }
-                            else {
+                            } else {
                                 isError = true;
                                 break;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         isError = true;
                     }
                     // 오류가 발생했을 때
@@ -172,7 +170,7 @@ public class Fragment_1 extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (isOnlyEmpty) {
+                                if (isSearchOnlyEmpty) {
                                     for (int i = MainActivity.lectures.size() - 1; i >= 0; i--) {
                                         if (MainActivity.lectures.get(i).getPresent() >= MainActivity.lectures.get(i).getLimit()) {
                                             MainActivity.lectures.remove(i);
